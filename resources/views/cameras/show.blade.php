@@ -155,4 +155,69 @@
                         
                         // Calculate total price
                         const totalPrice = (rentalPrice * diffDays) + bookingDeposit + securityDeposit;
-                        estimatedTotalSpan.textContent = '
+                        estimatedTotalSpan.textContent = '$' + totalPrice.toFixed(2);
+                    } else {
+                        totalDaysSpan.textContent = '-';
+                        estimatedTotalSpan.textContent = '-';
+                    }
+                } else {
+                    totalDaysSpan.textContent = '-';
+                    estimatedTotalSpan.textContent = '-';
+                }
+            }
+
+        }
+            
+            // Function to check if a date is already booked
+            function isDateBooked(date) {
+                return bookings.some(booking => {
+                    const startDate = new Date(booking.start_date);
+                    const endDate = new Date(booking.end_date);
+                    return date >= startDate && date <= endDate;
+                });
+            }
+            
+            // Function to validate the booking dates
+            function validateDates() {
+                if (startDateInput.value && endDateInput.value) {
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+                    
+                    if (endDate < startDate) {
+                        alert('End date must be after start date');
+                        return false;
+                    }
+                    
+                    // Check each date in the range
+                    let currentDate = new Date(startDate);
+                    while (currentDate <= endDate) {
+                        if (isDateBooked(currentDate)) {
+                            alert('One or more of your selected dates are already booked');
+                            return false;
+                        }
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                }
+                return true;
+            }
+            
+            // Add event listeners if the booking form exists
+            if (startDateInput && endDateInput) {
+                startDateInput.addEventListener('change', calculateTotals);
+                endDateInput.addEventListener('change', calculateTotals);
+                
+                if (bookingForm) {
+                    bookingForm.addEventListener('submit', function(e) {
+                        if (!validateDates()) {
+                            e.preventDefault();
+                        }
+                    });
+                }
+                
+                // Initial calculation
+                calculateTotals();
+            }
+        });
+    </script>
+    @endpush
+</x-app-layout>

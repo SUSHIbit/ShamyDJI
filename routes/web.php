@@ -57,3 +57,12 @@ Route::prefix('client')->middleware(['auth', 'role:client'])->group(function () 
     Route::get('/bookings/{booking}', [ClientBookingController::class, 'show'])->name('client.bookings.show');
     Route::patch('/bookings/{booking}/cancel', [ClientBookingController::class, 'cancel'])->name('client.bookings.cancel');
 });
+
+// Dashboard redirect based on role
+Route::get('/dashboard', function () {
+    if (auth()->user()->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } else {
+        return redirect()->route('client.dashboard');
+    }
+})->middleware(['auth'])->name('dashboard');
